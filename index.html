@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>AERIX — Vape Product Showcase</title>
+<style>
+  :root{
+    --bg:#f4f5f3; --surface:#ffffff; --surface-2:#eceee9; --ink:#141713; --muted:#5c665a;
+    --line:#d9ddd4; --accent:#3f7d1e; --accent-ink:#ffffff; --accent-soft:#e3f0d4;
+    --warn-bg:#141713; --warn-ink:#f5d90a; --chip:#eef0ea; --shadow:0 18px 40px rgba(20,23,19,.12);
+    --radius:18px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#101210; --surface:#181b17; --surface-2:#20241f; --ink:#eef1ea; --muted:#a7b0a2;
+      --line:#2e332c; --accent:#a8d93a; --accent-ink:#141713; --accent-soft:#26331a;
+      --warn-bg:#f5d90a; --warn-ink:#141713; --chip:#22261f; --shadow:0 18px 40px rgba(0,0,0,.45);
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  button{font:inherit;cursor:pointer}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+
+  .warn{background:var(--warn-bg);color:var(--warn-ink);text-align:center;font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;padding:.6rem 1rem;line-height:1.45}
+
+  header.site{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .bar{max-width:1180px;margin:0 auto;padding:.85rem 1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+  .brand{font-weight:900;font-size:1.35rem;letter-spacing:.14em;text-decoration:none}
+  .brand span{color:var(--accent)}
+  .brand small{display:block;font-size:.58rem;letter-spacing:.28em;font-weight:600;color:var(--muted)}
+  nav.main{display:flex;gap:1.1rem;margin-left:auto;flex-wrap:wrap}
+  nav.main a{text-decoration:none;font-weight:600;font-size:.92rem;color:var(--muted)}
+  nav.main a:hover{color:var(--ink)}
+  .display-only{border:1.5px solid var(--ink);border-radius:999px;padding:.35rem .8rem;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .lang-switch{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden;background:var(--surface)}
+  .lang-switch button{border:0;background:transparent;color:var(--ink);padding:.38rem .75rem;font-weight:800;font-size:.8rem;line-height:1}
+  .lang-switch button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+  .lang-switch.gate-lang{margin:0 auto 1rem}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 1.25rem}
+
+  .hero{padding:3.2rem 0 2.2rem;display:grid;grid-template-columns:1.25fr .75fr;gap:2rem;align-items:end}
+  .hero h1{font-size:clamp(2.1rem,5.2vw,3.6rem);line-height:1.08;margin:0 0 1rem;font-weight:900;letter-spacing:-.01em}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero p.lede{font-size:1.08rem;line-height:1.6;color:var(--muted);margin:0;max-width:34rem}
+  .sample-note{margin-top:1.2rem;display:inline-flex;gap:.5rem;align-items:center;background:var(--accent-soft);border-radius:10px;padding:.55rem .85rem;font-size:.85rem;font-weight:600;line-height:1.5}
+  .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem}
+  .stat b{display:block;font-size:1.55rem;font-weight:900}
+  .stat span{font-size:.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+
+  .filters{position:sticky;top:64px;z-index:30;background:var(--bg);padding:1rem 0 .9rem;border-bottom:1px solid var(--line)}
+  .filters-row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+  .chip-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:.5rem 1rem;font-weight:700;font-size:.88rem}
+  .chip-btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .filters input[type="search"], .filters select{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:.55rem 1rem;font:inherit;font-size:.9rem}
+  .filters input[type="search"]{flex:1 1 200px;min-width:160px}
+  .count-line{margin:.7rem 0 0;font-size:.85rem;color:var(--muted)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:1.1rem;padding:1.6rem 0 2.6rem}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:0;width:100%}
+  .card:hover{box-shadow:var(--shadow)}
+  .visual{height:210px;display:flex;align-items:flex-end;justify-content:center;padding-top:1.2rem;position:relative}
+  .badge{position:absolute;top:.75rem;left:.75rem;background:rgba(20,23,19,.85);color:#fff;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.3rem .6rem;border-radius:999px}
+  .badge.nic{left:auto;right:.75rem;background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+  .device{filter:drop-shadow(0 14px 14px rgba(0,0,0,.25))}
+  .card-body{padding:1.05rem 1.1rem 1.2rem;display:flex;flex-direction:column;gap:.55rem;flex:1}
+  .card h3{margin:0;font-size:1.12rem;font-weight:800;line-height:1.25}
+  .flavour{color:var(--muted);font-weight:600;font-size:.92rem;margin:0}
+  .spec-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.25rem}
+  .spec-chips span{background:var(--chip);border-radius:8px;padding:.3rem .55rem;font-size:.76rem;font-weight:600;font-family:"IBM Plex Mono",monospace}
+  .view-link{margin-top:auto;padding-top:.6rem;font-weight:800;font-size:.88rem;color:var(--accent)}
+  .empty{padding:3rem 1rem;text-align:center;color:var(--muted);font-weight:600}
+
+  section.block{padding:2.6rem 0;border-top:1px solid var(--line)}
+  section.block h2{font-size:1.7rem;font-weight:900;margin:0 0 .6rem}
+  section.block p.sub{color:var(--muted);line-height:1.6;max-width:44rem;margin:0 0 1.4rem}
+  .flavour-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.8rem}
+  .flavour-tile{border-radius:var(--radius);padding:1.1rem;color:#141713;min-height:104px;display:flex;flex-direction:column;justify-content:flex-end}
+  .flavour-tile b{font-size:1rem}
+  .flavour-tile span{font-size:.8rem;font-weight:600;opacity:.75}
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.9rem}
+  .rule{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.15rem}
+  .rule b{display:block;font-size:1.3rem;font-weight:900;margin-bottom:.35rem}
+  .rule p{margin:0;color:var(--muted);line-height:1.55;font-size:.92rem}
+  .contact-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.4rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  .contact-box p{margin:0;line-height:1.6;color:var(--muted);max-width:36rem}
+  .contact-box a.btn{background:var(--accent);color:var(--accent-ink);text-decoration:none;font-weight:800;border-radius:999px;padding:.7rem 1.3rem}
+
+  footer{border-top:1px solid var(--line);padding:2rem 0 3rem;color:var(--muted);font-size:.86rem;line-height:1.65}
+  footer .warn-line{border:1.5px solid var(--muted);padding:.8rem 1rem;text-align:center;font-weight:700;color:var(--ink);margin-bottom:1.2rem;border-radius:8px}
+
+  .gate{position:fixed;inset:0;z-index:100;background:rgba(10,11,10,.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1.25rem}
+  .gate-card{background:var(--surface);color:var(--ink);border-radius:22px;max-width:480px;width:100%;padding:2.2rem 2rem;text-align:center;box-shadow:var(--shadow)}
+  .gate-card .age-mark{width:74px;height:74px;margin:0 auto 1.1rem;border:3px solid #c22f2f;color:#c22f2f;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.25rem}
+  .gate-card h2{margin:0 0 .6rem;font-size:1.5rem;font-weight:900}
+  .gate-card p{color:var(--muted);line-height:1.6;margin:0 0 1.4rem;font-size:.95rem}
+  .gate-actions{display:grid;gap:.6rem}
+  .gate-actions button{border-radius:999px;padding:.85rem 1rem;font-weight:800;border:1.5px solid var(--ink)}
+  .gate-actions .yes{background:var(--ink);color:var(--bg)}
+  .gate-actions .no{background:transparent;color:var(--ink)}
+  .gate-denied{display:none}
+  body.locked{overflow:hidden}
+
+  .modal{position:fixed;inset:0;z-index:90;display:none;align-items:flex-end;justify-content:center;background:rgba(10,11,10,.6);backdrop-filter:blur(6px)}
+  .modal.open{display:flex}
+  .sheet{background:var(--surface);color:var(--ink);width:100%;max-width:760px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:0 0 2rem}
+  @media(min-width:700px){.modal{align-items:center;padding:1.5rem}.sheet{border-radius:22px}}
+  .sheet-visual{height:250px;display:flex;align-items:flex-end;justify-content:center;padding-top:1.4rem;position:relative}
+  .sheet-close{position:absolute;top:.9rem;right:.9rem;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:1.1rem;line-height:1}
+  .sheet-body{padding:1.4rem 1.6rem 0}
+  .sheet-body h2{margin:0 0 .3rem;font-size:1.6rem;font-weight:900}
+  .sheet-body .flavour{font-size:1rem}
+  .sheet-body p.desc{color:var(--muted);line-height:1.65}
+  table.specs{width:100%;border-collapse:collapse;margin-top:1rem;font-size:.93rem}
+  table.specs th, table.specs td{padding:.6rem .4rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  table.specs th{width:42%;color:var(--muted);font-weight:600}
+  table.specs td{font-weight:600}
+  .flavour-list{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem}
+  .flavour-list span{background:var(--chip);border-radius:999px;padding:.35rem .7rem;font-size:.82rem;font-weight:700}
+
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr;padding-top:2.2rem}
+    .filters{top:118px}
+    nav.main{gap:.8rem;margin-left:0}
+  }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+</style>
+</head>
+<body class="locked">
+
+<div class="warn" id="warn-top">Warning: These products contain nicotine. Nicotine is an addictive chemical. · Adults only (18+)</div>
+
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="#top">AERIX<span>.</span><small id="brand-sub">Product Showcase</small></a>
+    <nav class="main">
+      <a href="#products" id="nav-products">Products</a>
+      <a href="#flavours" id="nav-flavours">Flavours</a>
+      <a href="#compliance" id="nav-compliance">EU Notes</a>
+      <a href="#contact" id="nav-contact">Contact</a>
+    </nav>
+    <span class="display-only" id="display-only">Display only — no online sales</span>
+    <div class="lang-switch" role="group" aria-label="Language / 语言">
+      <button type="button" data-lang-btn="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang-btn="zh" aria-pressed="false">中文</button>
+    </div>
+  </div>
+</header>
+
+<main id="top" class="wrap">
+  <div class="hero">
+    <div>
+      <h1 id="hero-title">Browse the range.<br><em>Devices, flavours, full specs.</em></h1>
+      <p class="lede" id="hero-lede">A product showcase for adult customers in Europe. Explore disposable devices, pod systems and refillable kits — every key specification is listed on each product. This catalogue is for viewing only; nothing is sold through this website.</p>
+      <div class="sample-note" id="sample-note">▸ Sample catalogue — product names, visuals and specs are placeholders showing the layout. Real products will replace them.</div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><b>8</b><span id="stat-products">Sample products</span></div>
+      <div class="stat"><b>3</b><span id="stat-types">Device types</span></div>
+      <div class="stat"><b>0–20</b><span id="stat-nic">mg/ml nicotine</span></div>
+    </div>
+  </div>
+
+  <div class="filters" id="products">
+    <div class="filters-row" role="group" aria-label="Filter by device type" id="filter-group">
+      <button class="chip-btn" data-type="all" aria-pressed="true" id="chip-all">All products</button>
+      <button class="chip-btn" data-type="disposable" aria-pressed="false" id="chip-disposable">Disposable</button>
+      <button class="chip-btn" data-type="pod" aria-pressed="false" id="chip-pod">Pod systems</button>
+      <button class="chip-btn" data-type="refillable" aria-pressed="false" id="chip-refillable">Refillable kits</button>
+    </div>
+    <div class="filters-row" style="margin-top:.6rem">
+      <input type="search" id="search" placeholder="Search by name or flavour…" aria-label="Search products">
+      <select id="nic-filter" aria-label="Filter by nicotine strength">
+        <option value="all" id="nic-all">Any nicotine strength</option>
+        <option value="0" id="nic-0">0 mg/ml — nicotine-free</option>
+        <option value="10">10 mg/ml</option>
+        <option value="20">20 mg/ml</option>
+      </select>
+    </div>
+    <p class="count-line mono" id="count-line"></p>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>No products match those filters. Try a different flavour or nicotine strength.</p>
+
+  <section class="block" id="flavours">
+    <h2 id="flavours-title">Flavour families</h2>
+    <p class="sub" id="flavours-sub">The range is organised into six flavour families. Each product page lists the exact flavours available for that device.</p>
+    <div class="flavour-grid">
+      <div class="flavour-tile" style="background:#f2b8c6"><b data-fam="0">Fruit Ice</b><span data-fam-sub="0">Watermelon · Mango · Berry</span></div>
+      <div class="flavour-tile" style="background:#bfe3c8"><b data-fam="1">Mint &amp; Menthol</b><span data-fam-sub="1">Cool Mint · Spearmint</span></div>
+      <div class="flavour-tile" style="background:#f7d774"><b data-fam="2">Citrus</b><span data-fam-sub="2">Lemon Lime · Orange</span></div>
+      <div class="flavour-tile" style="background:#d9c7f0"><b data-fam="3">Berry Blend</b><span data-fam-sub="3">Blue Razz · Mixed Berries</span></div>
+      <div class="flavour-tile" style="background:#e8c39a"><b data-fam="4">Tobacco</b><span data-fam-sub="4">Classic · Smooth</span></div>
+      <div class="flavour-tile" style="background:#bcd9ea"><b data-fam="5">Zero Nicotine</b><span data-fam-sub="5">Fruit &amp; mint, 0 mg/ml</span></div>
+    </div>
+  </section>
+
+  <section class="block" id="compliance">
+    <h2 id="compliance-title">EU product notes</h2>
+    <p class="sub" id="compliance-sub">Products shown for the European market follow the headline limits of the EU Tobacco Products Directive. Always check the rules of your own country before purchase — some EU countries restrict flavours, disposables or distance selling.</p>
+    <div class="rules">
+      <div class="rule"><b id="rule1-b">20 mg/ml max</b><p id="rule1-p">Maximum nicotine concentration permitted for e-liquids sold in the EU.</p></div>
+      <div class="rule"><b id="rule2-b">2 ml pods &amp; tanks</b><p id="rule2-p">Maximum capacity for cartridges, pods and tanks containing nicotine e-liquid.</p></div>
+      <div class="rule"><b id="rule3-b">10 ml refills</b><p id="rule3-p">Maximum bottle size for nicotine-containing refill liquids.</p></div>
+      <div class="rule"><b id="rule4-b">18+ only</b><p id="rule4-p">These products are intended for adult smokers. Keep out of reach of children and pets.</p></div>
+    </div>
+  </section>
+
+  <section class="block" id="contact">
+    <h2 id="contact-title">Questions about a product?</h2>
+    <div class="contact-box">
+      <p id="contact-text">This website is a showcase only — there is no checkout and no online ordering. For product information, availability and wholesale enquiries, contact us by email and mention the product name.</p>
+      <a class="btn" id="contact-btn" href="mailto:info@example.com?subject=Product%20enquiry">Email us</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="warn-line" id="footer-warn">WARNING: These products contain nicotine. Nicotine is an addictive chemical.</div>
+    <p id="footer-text">AERIX is a placeholder brand used for this sample layout. All products, names, images and specifications on this page are examples and will be replaced with the real range. Do not use e-cigarettes if you are under 18, pregnant, or a non-smoker. Dispose of devices and batteries responsibly at a WEEE collection point — never in household waste.</p>
+    <p class="mono" id="footer-copy">© 2026 AERIX Showcase · Display only · No sales through this site</p>
+  </div>
+</footer>
+
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+  <div class="gate-card">
+    <div class="lang-switch gate-lang" role="group" aria-label="Language / 语言">
+      <button type="button" data-lang-btn="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang-btn="zh" aria-pressed="false">中文</button>
+    </div>
+    <div id="gate-main">
+      <div class="age-mark">18+</div>
+      <h2 id="gate-title">Adults only</h2>
+      <p id="gate-text">This website showcases nicotine products intended for adults. You must be 18 or older to enter. By entering, you confirm that you are of legal age in your country.</p>
+      <div class="gate-actions">
+        <button class="yes" id="gate-yes">I am 18 or older — Enter</button>
+        <button class="no" id="gate-no">I am under 18</button>
+      </div>
+    </div>
+    <div id="gate-denied" class="gate-denied">
+      <div class="age-mark">18+</div>
+      <h2 id="gate-denied-title">Access restricted</h2>
+      <p id="gate-denied-text">Sorry — this content is restricted to adults aged 18 and over, so we can't show you the catalogue.</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+var LANG = 'en';
+var currentDetailId = null;
+
+var I18N = {
+  en: {
+    warnTop: "Warning: These products contain nicotine. Nicotine is an addictive chemical. · Adults only (18+)",
+    brandSub: "Product Showcase",
+    navProducts: "Products", navFlavours: "Flavours", navCompliance: "EU Notes", navContact: "Contact",
+    displayOnly: "Display only — no online sales",
+    heroTitle: "Browse the range.<br><em>Devices, flavours, full specs.</em>",
+    heroLede: "A product showcase for adult customers in Europe. Explore disposable devices, pod systems and refillable kits — every key specification is listed on each product. This catalogue is for viewing only; nothing is sold through this website.",
+    sampleNote: "▸ Sample catalogue — product names, visuals and specs are placeholders showing the layout. Real products will replace them.",
+    statProducts: "Sample products", statTypes: "Device types", statNic: "mg/ml nicotine",
+    chipAll: "All products", chipDisposable: "Disposable", chipPod: "Pod systems", chipRefillable: "Refillable kits",
+    searchPh: "Search by name or flavour…", searchAria: "Search products",
+    nicAria: "Filter by nicotine strength", nicAll: "Any nicotine strength", nic0: "0 mg/ml — nicotine-free",
+    filterAria: "Filter by device type",
+    empty: "No products match those filters. Try a different flavour or nicotine strength.",
+    flavoursTitle: "Flavour families",
+    flavoursSub: "The range is organised into six flavour families. Each product page lists the exact flavours available for that device.",
+    fams: [["Fruit Ice","Watermelon · Mango · Berry"],["Mint & Menthol","Cool Mint · Spearmint"],["Citrus","Lemon Lime · Orange"],["Berry Blend","Blue Razz · Mixed Berries"],["Tobacco","Classic · Smooth"],["Zero Nicotine","Fruit & mint, 0 mg/ml"]],
+    complianceTitle: "EU product notes",
+    complianceSub: "Products shown for the European market follow the headline limits of the EU Tobacco Products Directive. Always check the rules of your own country before purchase — some EU countries restrict flavours, disposables or distance selling.",
+    rule1b: "20 mg/ml max", rule1p: "Maximum nicotine concentration permitted for e-liquids sold in the EU.",
+    rule2b: "2 ml pods & tanks", rule2p: "Maximum capacity for cartridges, pods and tanks containing nicotine e-liquid.",
+    rule3b: "10 ml refills", rule3p: "Maximum bottle size for nicotine-containing refill liquids.",
+    rule4b: "18+ only", rule4p: "These products are intended for adult smokers. Keep out of reach of children and pets.",
+    contactTitle: "Questions about a product?",
+    contactText: "This website is a showcase only — there is no checkout and no online ordering. For product information, availability and wholesale enquiries, contact us by email and mention the product name.",
+    contactBtn: "Email us",
+    footerWarn: "WARNING: These products contain nicotine. Nicotine is an addictive chemical.",
+    footerText: "AERIX is a placeholder brand used for this sample layout. All products, names, images and specifications on this page are examples and will be replaced with the real range. Do not use e-cigarettes if you are under 18, pregnant, or a non-smoker. Dispose of devices and batteries responsibly at a WEEE collection point — never in household waste.",
+    footerCopy: "© 2026 AERIX Showcase · Display only · No sales through this site",
+    gateTitle: "Adults only",
+    gateText: "This website showcases nicotine products intended for adults. You must be 18 or older to enter. By entering, you confirm that you are of legal age in your country.",
+    gateYes: "I am 18 or older — Enter", gateNo: "I am under 18",
+    gateDeniedTitle: "Access restricted",
+    gateDeniedText: "Sorry — this content is restricted to adults aged 18 and over, so we can't show you the catalogue.",
+    badgeSample: "Sample", badgeSampleLong: "Sample product",
+    viewSpecs: "View specifications →",
+    count: function(a,b){ return "SHOWING " + a + " OF " + b + " SAMPLE PRODUCTS"; },
+    specsTitle: "Specifications",
+    specNic: "Nicotine strength", specYield: "Yield", specCapacity: "E-liquid capacity", specBattery: "Battery", specCoil: "Coil", specCharging: "Charging",
+    flavoursAvailable: "Available flavours",
+    modalWarn: "⚠ This product contains nicotine, which is a highly addictive substance. Adults only (18+). Sample listing — specifications are placeholders for layout purposes.",
+    closeAria: "Close",
+    title: "AERIX — Vape Product Showcase"
+  },
+  zh: {
+    warnTop: "警告：本产品含有尼古丁。尼古丁是一种成瘾性化学物质。· 仅限成年人（18+）",
+    brandSub: "产品展示",
+    navProducts: "产品", navFlavours: "口味", navCompliance: "欧盟说明", navContact: "联系我们",
+    displayOnly: "仅展示 — 不提供在线销售",
+    heroTitle: "浏览全部产品。<br><em>设备、口味与完整参数。</em>",
+    heroLede: "面向欧洲成年客户的产品展示站。浏览一次性设备、换弹式设备和可注油套装——每款产品都列出了关键参数。本目录仅供查看，本站不销售任何产品。",
+    sampleNote: "▸ 示例目录 — 产品名称、图片和参数均为占位内容，用于展示版式，后续将替换为真实产品。",
+    statProducts: "示例产品", statTypes: "设备类型", statNic: "mg/ml 尼古丁",
+    chipAll: "全部产品", chipDisposable: "一次性", chipPod: "换弹式", chipRefillable: "可注油套装",
+    searchPh: "按名称或口味搜索…", searchAria: "搜索产品",
+    nicAria: "按尼古丁浓度筛选", nicAll: "任意尼古丁浓度", nic0: "0 mg/ml — 无尼古丁",
+    filterAria: "按设备类型筛选",
+    empty: "没有符合筛选条件的产品。请换个口味或尼古丁浓度试试。",
+    flavoursTitle: "口味系列",
+    flavoursSub: "全部产品按六大口味系列分类。每个产品详情页都会列出该设备可选的具体口味。",
+    fams: [["水果冰爽","西瓜 · 芒果 · 浆果"],["薄荷与凉感","清凉薄荷 · 留兰香薄荷"],["柑橘","柠檬青柠 · 橙子"],["浆果混合","蓝树莓 · 混合浆果"],["烟草","经典 · 柔和"],["零尼古丁","水果与薄荷，0 mg/ml"]],
+    complianceTitle: "欧盟产品说明",
+    complianceSub: "面向欧洲市场展示的产品遵循欧盟《烟草产品指令》的核心限值。购买前请务必确认您所在国家的规定——部分欧盟国家对口味、一次性产品或远程销售有额外限制。",
+    rule1b: "最高 20 mg/ml", rule1p: "欧盟允许销售的烟油最高尼古丁浓度。",
+    rule2b: "烟弹与油仓 2 ml", rule2p: "含尼古丁烟油的烟弹、烟仓和油仓最大容量。",
+    rule3b: "补充液 10 ml", rule3p: "含尼古丁补充液的最大瓶装规格。",
+    rule4b: "仅限 18+", rule4p: "本产品面向成年吸烟者。请置于儿童和宠物无法触及之处。",
+    contactTitle: "对某个产品有疑问？",
+    contactText: "本网站仅供展示——没有结账功能，也不支持在线下单。如需了解产品信息、供货情况或批发咨询，请通过邮件联系我们，并注明产品名称。",
+    contactBtn: "发送邮件",
+    footerWarn: "警告：本产品含有尼古丁。尼古丁是一种成瘾性化学物质。",
+    footerText: "AERIX 为本示例版式使用的占位品牌。本页所有产品、名称、图片和参数均为示例，后续将替换为真实产品。未满 18 岁、孕期或不吸烟者请勿使用电子烟。请将设备和电池送至 WEEE 回收点妥善处理——切勿丢入生活垃圾。",
+    footerCopy: "© 2026 AERIX 展示站 · 仅展示 · 本站不销售产品",
+    gateTitle: "仅限成年人",
+    gateText: "本网站展示面向成年人的尼古丁产品。您必须年满 18 岁方可进入。点击进入即表示您确认已达到您所在国家的法定年龄。",
+    gateYes: "我已满 18 岁 — 进入", gateNo: "我未满 18 岁",
+    gateDeniedTitle: "访问受限",
+    gateDeniedText: "抱歉——本内容仅限 18 岁及以上成年人，无法为您展示产品目录。",
+    badgeSample: "示例", badgeSampleLong: "示例产品",
+    viewSpecs: "查看参数 →",
+    count: function(a,b){ return "正在显示 " + a + " / " + b + " 个示例产品"; },
+    specsTitle: "产品参数",
+    specNic: "尼古丁浓度", specYield: "口数", specCapacity: "烟油容量", specBattery: "电池", specCoil: "线圈 / 雾化芯", specCharging: "充电",
+    flavoursAvailable: "可选口味",
+    modalWarn: "⚠ 本产品含有尼古丁，尼古丁具有高度成瘾性。仅限成年人（18+）。示例产品——参数为版式占位内容。",
+    closeAria: "关闭",
+    title: "AERIX — 电子烟产品展示"
+  }
+};
+
+var FLAVOUR_ZH = {
+  "Watermelon Ice":"西瓜冰","Blue Razz Lemonade":"蓝树莓柠檬水","Cool Mint":"清凉薄荷","Mango Peach":"芒果蜜桃","Classic Tobacco":"经典烟草",
+  "Lemon Lime":"柠檬青柠","Strawberry Kiwi":"草莓猕猴桃","Spearmint":"留兰香薄荷","Orange Soda":"橙子汽水",
+  "Blueberry Sour Raspberry":"蓝莓酸树莓","Kiwi Passionfruit Guava":"猕猴桃百香果番石榴","Pink Lemonade":"粉红柠檬水","Cola Ice":"可乐冰",
+  "Cool Mint pods":"清凉薄荷烟弹","Blueberry":"蓝莓","Coffee":"咖啡","Mixed Berries pods":"混合浆果烟弹","Mixed Berries":"混合浆果","Mango Ice":"芒果冰","Virginia Tobacco":"弗吉尼亚烟草","Apple Peach":"苹果蜜桃",
+  "Use with 10 ml refills":"搭配 10 ml 补充液使用","Adjustable airflow":"可调节气流",
+  "Works with any 10 ml refill bottle":"适用于任意 10 ml 补充液瓶","Nicotine-free to 20 mg/ml":"0 至 20 mg/ml 可选","Freebase or nic-salt liquids":"游离碱或尼古丁盐烟油均可",
+  "Smooth Tobacco":"柔和烟草","Vanilla":"香草","0 / 10 / 20 mg/ml options":"提供 0 / 10 / 20 mg/ml 选项"
+};
+var TYPE_ZH = {"Disposable":"一次性","Pod system":"换弹式","Refillable kit":"可注油套装","Refill liquid":"补充液"};
+var VALUE_ZH = {
+  "600 puffs":"约 600 口","≈600 puffs / pod":"每弹约 600 口","Refillable":"可重复注油","10 ml bottle":"10 ml 瓶装",
+  "2 ml pre-filled pods":"2 ml 预填充烟弹","2 ml tank":"2 ml 油仓",
+  "Mesh 1.2 Ω":"网状雾化芯 1.2 Ω","Dual mesh 1.0 Ω":"双网雾化芯 1.0 Ω","Mesh 1.1 Ω (in pod)":"网状雾化芯 1.1 Ω（烟弹内）","Mesh 0.9 Ω (in pod)":"网状雾化芯 0.9 Ω（烟弹内）",
+  "Replaceable 0.8 Ω / 1.2 Ω":"可更换 0.8 Ω / 1.2 Ω","Replaceable 0.6 Ω / 1.0 Ω":"可更换 0.6 Ω / 1.0 Ω",
+  "— (single use)":"—（一次性使用）"
+};
+function trFlavour(s){ return LANG==='zh' && FLAVOUR_ZH[s] ? FLAVOUR_ZH[s] : s; }
+function trType(s){ return LANG==='zh' && TYPE_ZH[s] ? TYPE_ZH[s] : s; }
+function trVal(s){ return LANG==='zh' && VALUE_ZH[s] ? VALUE_ZH[s] : s; }
+function T(){ return I18N[LANG]; }
+
+var PRODUCTS = [
+  { id:1, name:"AERIX One 600", type:"disposable", typeLabel:"Disposable", flavour:"Watermelon Ice", family:"Fruit Ice",
+    color:"#e5484d", color2:"#f2798f", nic:20, puffs:"600 puffs", capacity:"2 ml", battery:"550 mAh", coil:"Mesh 1.2 Ω", charging:"— (single use)",
+    desc:"A slim single-use device, pre-filled and pre-charged. Draw-activated with no buttons or settings — shown here as the entry-level sample in the disposable range.",
+    descZh:"纤薄的一次性设备，预填充、预充电。吸气即可激活，无按键、无需设置——本版式中一次性系列的入门级示例产品。",
+    flavours:["Watermelon Ice","Blue Razz Lemonade","Cool Mint","Mango Peach","Classic Tobacco"] },
+  { id:2, name:"AERIX One Zero", type:"disposable", typeLabel:"Disposable", flavour:"Lemon Lime", family:"Citrus",
+    color:"#d9a514", color2:"#f0cd55", nic:0, puffs:"600 puffs", capacity:"2 ml", battery:"550 mAh", coil:"Mesh 1.2 Ω", charging:"— (single use)",
+    desc:"The nicotine-free version of the sample disposable range — same format and flavours, 0 mg/ml throughout.",
+    descZh:"示例一次性系列的无尼古丁版本——相同的外观与口味，全系 0 mg/ml。",
+    flavours:["Lemon Lime","Strawberry Kiwi","Spearmint","Orange Soda"] },
+  { id:3, name:"AERIX Bar Recharge", type:"disposable", typeLabel:"Disposable", flavour:"Blueberry Sour Raspberry", family:"Berry Blend",
+    color:"#5b6ee1", color2:"#8fa1f2", nic:20, puffs:"600 puffs", capacity:"2 ml", battery:"650 mAh", coil:"Dual mesh 1.0 Ω", charging:"USB-C",
+    desc:"A rechargeable version of the sample disposable: the same 2 ml pre-filled format, with a USB-C port and a small display showing battery level, so the full pod can be finished before disposal.",
+    descZh:"可充电版示例一次性产品：同样为 2 ml 预填充规格，配有 USB-C 接口和小显示屏显示电量，可用完整个烟弹再丢弃。",
+    flavours:["Blueberry Sour Raspberry","Kiwi Passionfruit Guava","Pink Lemonade","Cola Ice"] },
+  { id:4, name:"AERIX Pod S", type:"pod", typeLabel:"Pod system", flavour:"Cool Mint pods", family:"Mint & Menthol",
+    color:"#2f9e6e", color2:"#63c48f", nic:20, puffs:"≈600 puffs / pod", capacity:"2 ml pre-filled pods", battery:"400 mAh", coil:"Mesh 1.1 Ω (in pod)", charging:"USB-C",
+    desc:"A compact rechargeable device using pre-filled 2 ml pods. Swap flavours by swapping pods — the sample closed-pod system in this layout.",
+    descZh:"紧凑型可充电设备，使用 2 ml 预填充烟弹。更换烟弹即可切换口味——本版式中的封闭式换弹示例。",
+    flavours:["Cool Mint","Classic Tobacco","Blueberry","Watermelon Ice","Coffee"] },
+  { id:5, name:"AERIX Pod X", type:"pod", typeLabel:"Pod system", flavour:"Mixed Berries pods", family:"Berry Blend",
+    color:"#7a4fa3", color2:"#a678c9", nic:10, puffs:"≈600 puffs / pod", capacity:"2 ml pre-filled pods", battery:"600 mAh", coil:"Mesh 0.9 Ω (in pod)", charging:"USB-C",
+    desc:"The mid-strength sample pod system at 10 mg/ml, with a larger battery and a side-fill spare pod option.",
+    descZh:"10 mg/ml 中等浓度的示例换弹系统，电池更大，并可选侧注油备用烟弹。",
+    flavours:["Mixed Berries","Mango Ice","Virginia Tobacco","Apple Peach"] },
+  { id:6, name:"AERIX Kit M", type:"refillable", typeLabel:"Refillable kit", flavour:"Use with 10 ml refills", family:"Open system",
+    color:"#3a3f3a", color2:"#6b7268", nic:20, puffs:"Refillable", capacity:"2 ml tank", battery:"1,000 mAh", coil:"Replaceable 0.8 Ω / 1.2 Ω", charging:"USB-C",
+    desc:"An open-system starter kit: refill the 2 ml tank with any 10 ml e-liquid bottle and replace coils as needed. The flexible sample kit in this layout.",
+    descZh:"开放式入门套装：可向 2 ml 油仓注入任意 10 ml 烟油，并按需更换雾化芯。本版式中灵活使用的示例套装。",
+    flavours:["Works with any 10 ml refill bottle","Nicotine-free to 20 mg/ml"] },
+  { id:7, name:"AERIX Kit Pro", type:"refillable", typeLabel:"Refillable kit", flavour:"Adjustable airflow", family:"Open system",
+    color:"#b35c1e", color2:"#dd8a45", nic:20, puffs:"Refillable", capacity:"2 ml tank", battery:"1,500 mAh", coil:"Replaceable 0.6 Ω / 1.0 Ω", charging:"USB-C",
+    desc:"The advanced sample kit with adjustable wattage (5–30 W) and airflow, a clear display and replaceable coils for mouth-to-lung or restricted direct-lung use.",
+    descZh:"进阶示例套装，功率可调（5–30 W）、气流可调，配有清晰显示屏和可更换雾化芯，适用于口吸或受限直肺吸法。",
+    flavours:["Works with any 10 ml refill bottle","Freebase or nic-salt liquids"] },
+  { id:8, name:"AERIX Refill 10 ml", type:"refillable", typeLabel:"Refill liquid", flavour:"Classic Tobacco", family:"Tobacco",
+    color:"#8a6d3b", color2:"#b99b5f", nic:20, puffs:"10 ml bottle", capacity:"10 ml", battery:"—", coil:"—", charging:"—",
+    desc:"Sample 10 ml refill bottles in the maximum size allowed for nicotine liquids in the EU, with child-resistant caps and tactile warning labels.",
+    descZh:"示例 10 ml 补充液瓶，为欧盟允许的尼古丁烟油最大规格，配有儿童安全瓶盖和触觉警示标签。",
+    flavours:["Classic Tobacco","Smooth Tobacco","Cool Mint","Vanilla","0 / 10 / 20 mg/ml options"] }
+];
+
+function deviceSVG(p, h){
+  var height = h || 168;
+  var body;
+  if(p.type === "refillable" && p.id === 8){
+    body = '<rect x="86" y="30" width="52" height="14" rx="4" fill="#22241f"/>'
+         + '<rect x="80" y="44" width="64" height="118" rx="12" fill="'+p.color+'"/>'
+         + '<rect x="92" y="66" width="40" height="52" rx="6" fill="rgba(255,255,255,.82)"/>'
+         + '<rect x="97" y="76" width="30" height="5" rx="2.5" fill="#9aa091"/><rect x="97" y="86" width="30" height="5" rx="2.5" fill="#c3c9bb"/><rect x="97" y="96" width="22" height="5" rx="2.5" fill="#c3c9bb"/>';
+  } else if(p.type === "refillable"){
+    body = '<rect x="96" y="8" width="32" height="20" rx="5" fill="#22241f"/>'
+         + '<rect x="84" y="26" width="56" height="46" rx="9" fill="'+p.color2+'"/>'
+         + '<rect x="74" y="70" width="76" height="92" rx="13" fill="'+p.color+'"/>'
+         + '<rect x="88" y="88" width="34" height="22" rx="5" fill="rgba(255,255,255,.28)"/>'
+         + '<circle cx="105" cy="132" r="8" fill="rgba(255,255,255,.4)"/>';
+  } else if(p.type === "pod"){
+    body = '<rect x="94" y="10" width="36" height="34" rx="8" fill="#22241f"/>'
+         + '<rect x="86" y="40" width="52" height="122" rx="16" fill="'+p.color+'"/>'
+         + '<rect x="99" y="62" width="26" height="8" rx="4" fill="rgba(255,255,255,.35)"/>'
+         + '<circle cx="112" cy="140" r="4" fill="rgba(255,255,255,.55)"/>';
+  } else {
+    body = '<rect x="97" y="6" width="30" height="22" rx="7" fill="#22241f"/>'
+         + '<rect x="90" y="24" width="44" height="140" rx="15" fill="'+p.color+'"/>'
+         + '<rect x="90" y="96" width="44" height="68" rx="15" fill="'+p.color2+'"/>'
+         + '<rect x="103" y="44" width="18" height="34" rx="9" fill="rgba(255,255,255,.3)"/>';
+  }
+  return '<svg class="device" width="112" height="'+height+'" viewBox="0 0 224 172" role="img" aria-label="Illustration of '+p.name+'">'+body+'</svg>';
+}
+
+var grid = document.getElementById('grid');
+var emptyEl = document.getElementById('empty');
+var countLine = document.getElementById('count-line');
+var activeType = 'all';
+
+function render(){
+  var q = document.getElementById('search').value.trim().toLowerCase();
+  var nic = document.getElementById('nic-filter').value;
+  var list = PRODUCTS.filter(function(p){
+    if(activeType !== 'all' && p.type !== activeType) return false;
+    if(nic !== 'all' && String(p.nic) !== nic) return false;
+    if(q){
+      var zhFlavours = p.flavours.map(function(f){ return FLAVOUR_ZH[f]||''; }).join(' ');
+      var hay = (p.name + ' ' + p.flavour + ' ' + (FLAVOUR_ZH[p.flavour]||'') + ' ' + p.family + ' ' + p.flavours.join(' ') + ' ' + zhFlavours + ' ' + (p.descZh||'')).toLowerCase();
+      if(hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+  var t = T();
+  grid.innerHTML = list.map(function(p){
+    return '<button class="card" data-id="'+p.id+'" aria-haspopup="dialog">'
+      + '<span class="visual" style="background:linear-gradient(180deg,'+p.color2+'33,'+p.color+'22)"><span class="badge">'+t.badgeSample+'</span><span class="badge nic mono">'+p.nic+' mg/ml</span>'+deviceSVG(p)+'</span>'
+      + '<span class="card-body"><h3>'+p.name+'</h3><p class="flavour">'+trFlavour(p.flavour)+' · '+trType(p.typeLabel)+'</p>'
+      + '<span class="spec-chips"><span>'+trVal(p.puffs)+'</span><span>'+trVal(p.capacity)+'</span><span>'+p.battery+'</span></span>'
+      + '<span class="view-link">'+t.viewSpecs+'</span></span></button>';
+  }).join('');
+  emptyEl.hidden = list.length > 0;
+  countLine.textContent = t.count(list.length, PRODUCTS.length);
+  var cards = grid.querySelectorAll('.card');
+  for(var i=0;i<cards.length;i++){
+    cards[i].addEventListener('click', function(){ openDetail(Number(this.getAttribute('data-id'))); });
+  }
+}
+
+var chipBtns = document.querySelectorAll('.chip-btn');
+for(var i=0;i<chipBtns.length;i++){
+  chipBtns[i].addEventListener('click', function(){
+    activeType = this.getAttribute('data-type');
+    for(var j=0;j<chipBtns.length;j++) chipBtns[j].setAttribute('aria-pressed', chipBtns[j]===this ? 'true':'false');
+    render();
+  });
+}
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('nic-filter').addEventListener('change', render);
+
+var modal = document.getElementById('modal');
+var sheet = document.getElementById('sheet');
+function openDetail(id){
+  var p = null;
+  for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i].id===id) p = PRODUCTS[i];
+  if(!p) return;
+  currentDetailId = id;
+  var t = T();
+  var desc = LANG==='zh' ? p.descZh : p.desc;
+  sheet.innerHTML =
+      '<div class="sheet-visual" style="background:linear-gradient(180deg,'+p.color2+'33,'+p.color+'22)">'
+    + '<button class="sheet-close" id="sheet-close" aria-label="'+t.closeAria+'">✕</button>'
+    + '<span class="badge">'+t.badgeSampleLong+'</span>' + deviceSVG(p, 205) + '</div>'
+    + '<div class="sheet-body"><h2>'+p.name+'</h2>'
+    + '<p class="flavour">'+trFlavour(p.flavour)+' · '+trType(p.typeLabel)+'</p>'
+    + '<p class="desc">'+desc+'</p>'
+    + '<h3 style="margin:1.2rem 0 .2rem;font-size:1rem">'+t.specsTitle+'</h3>'
+    + '<table class="specs">'
+    + '<tr><th>'+t.specNic+'</th><td>'+p.nic+' mg/ml</td></tr>'
+    + '<tr><th>'+t.specYield+'</th><td>'+trVal(p.puffs)+'</td></tr>'
+    + '<tr><th>'+t.specCapacity+'</th><td>'+trVal(p.capacity)+'</td></tr>'
+    + '<tr><th>'+t.specBattery+'</th><td>'+p.battery+'</td></tr>'
+    + '<tr><th>'+t.specCoil+'</th><td>'+trVal(p.coil)+'</td></tr>'
+    + '<tr><th>'+t.specCharging+'</th><td>'+trVal(p.charging)+'</td></tr>'
+    + '</table>'
+    + '<h3 style="margin:1.2rem 0 .2rem;font-size:1rem">'+t.flavoursAvailable+'</h3>'
+    + '<div class="flavour-list">' + p.flavours.map(function(f){ return '<span>'+trFlavour(f)+'</span>'; }).join('') + '</div>'
+    + '<p class="desc" style="margin-top:1.2rem;font-size:.85rem">'+t.modalWarn+'</p>'
+    + '</div>';
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('sheet-close').addEventListener('click', closeDetail);
+}
+function closeDetail(){
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  currentDetailId = null;
+}
+modal.addEventListener('click', function(e){ if(e.target === modal) closeDetail(); });
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeDetail(); });
+
+document.getElementById('gate-yes').addEventListener('click', function(){
+  document.getElementById('gate').style.display = 'none';
+  document.body.classList.remove('locked');
+});
+document.getElementById('gate-no').addEventListener('click', function(){
+  document.getElementById('gate-main').style.display = 'none';
+  document.getElementById('gate-denied').style.display = 'block';
+});
+
+function setText(id, txt){ var el=document.getElementById(id); if(el) el.textContent = txt; }
+function applyLang(lang){
+  LANG = lang;
+  var t = T();
+  document.documentElement.lang = lang==='zh' ? 'zh-CN' : 'en';
+  document.title = t.title;
+  setText('warn-top', t.warnTop);
+  setText('brand-sub', t.brandSub);
+  setText('nav-products', t.navProducts); setText('nav-flavours', t.navFlavours); setText('nav-compliance', t.navCompliance); setText('nav-contact', t.navContact);
+  setText('display-only', t.displayOnly);
+  document.getElementById('hero-title').innerHTML = t.heroTitle;
+  setText('hero-lede', t.heroLede); setText('sample-note', t.sampleNote);
+  setText('stat-products', t.statProducts); setText('stat-types', t.statTypes); setText('stat-nic', t.statNic);
+  setText('chip-all', t.chipAll); setText('chip-disposable', t.chipDisposable); setText('chip-pod', t.chipPod); setText('chip-refillable', t.chipRefillable);
+  var searchEl = document.getElementById('search'); searchEl.placeholder = t.searchPh; searchEl.setAttribute('aria-label', t.searchAria);
+  var nicEl = document.getElementById('nic-filter'); nicEl.setAttribute('aria-label', t.nicAria);
+  setText('nic-all', t.nicAll); setText('nic-0', t.nic0);
+  document.getElementById('filter-group').setAttribute('aria-label', t.filterAria);
+  setText('empty', t.empty);
+  setText('flavours-title', t.flavoursTitle); setText('flavours-sub', t.flavoursSub);
+  var famB = document.querySelectorAll('[data-fam]'); var famS = document.querySelectorAll('[data-fam-sub]');
+  for(var i=0;i<famB.length;i++){ famB[i].textContent = t.fams[i][0]; }
+  for(var j=0;j<famS.length;j++){ famS[j].textContent = t.fams[j][1]; }
+  setText('compliance-title', t.complianceTitle); setText('compliance-sub', t.complianceSub);
+  setText('rule1-b', t.rule1b); setText('rule1-p', t.rule1p); setText('rule2-b', t.rule2b); setText('rule2-p', t.rule2p);
+  setText('rule3-b', t.rule3b); setText('rule3-p', t.rule3p); setText('rule4-b', t.rule4b); setText('rule4-p', t.rule4p);
+  setText('contact-title', t.contactTitle); setText('contact-text', t.contactText); setText('contact-btn', t.contactBtn);
+  document.getElementById('contact-btn').href = lang==='zh' ? 'mailto:info@example.com?subject=%E4%BA%A7%E5%93%81%E5%92%A8%E8%AF%A2' : 'mailto:info@example.com?subject=Product%20enquiry';
+  setText('footer-warn', t.footerWarn); setText('footer-text', t.footerText); setText('footer-copy', t.footerCopy);
+  setText('gate-title', t.gateTitle); setText('gate-text', t.gateText); setText('gate-yes', t.gateYes); setText('gate-no', t.gateNo);
+  setText('gate-denied-title', t.gateDeniedTitle); setText('gate-denied-text', t.gateDeniedText);
+  var btns = document.querySelectorAll('[data-lang-btn]');
+  for(var k=0;k<btns.length;k++){ btns[k].setAttribute('aria-pressed', btns[k].getAttribute('data-lang-btn')===lang ? 'true':'false'); }
+  render();
+  if(currentDetailId !== null && modal.classList.contains('open')){
+    var keep = currentDetailId; openDetail(keep);
+  }
+}
+var langBtns = document.querySelectorAll('[data-lang-btn]');
+for(var b=0;b<langBtns.length;b++){
+  langBtns[b].addEventListener('click', function(){ applyLang(this.getAttribute('data-lang-btn')); });
+}
+
+render();
+</script>
+</body>
+</html>
